@@ -1,12 +1,13 @@
 package nuber.students;
 
 import java.util.HashMap;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Future;
 
 /**
  * The core Dispatch class that instantiates and manages everything for Nuber
  * 
- * @author james
+ * @author James(class design), Matthew(class functionality)
  *
  */
 public class NuberDispatch {
@@ -18,6 +19,9 @@ public class NuberDispatch {
 	
 	private boolean logEvents = false;
 	
+	private HashMap<String, NuberRegion> regions = new HashMap<String, NuberRegion>();
+	private ArrayBlockingQueue<Driver> drivers = new ArrayBlockingQueue<Driver>(MAX_DRIVERS);
+	
 	/**
 	 * Creates a new dispatch objects and instantiates the required regions and any other objects required.
 	 * It should be able to handle a variable number of regions based on the HashMap provided.
@@ -25,8 +29,17 @@ public class NuberDispatch {
 	 * @param regionInfo Map of region names and the max simultaneous bookings they can handle
 	 * @param logEvents Whether logEvent should print out events passed to it
 	 */
-	public NuberDispatch(HashMap<String, Integer> regionInfo, boolean logEvents)
-	{
+	public NuberDispatch(HashMap<String, Integer> regionInfo, boolean logEvents) {
+		this.logEvents = logEvents;
+		
+		for (String i : regionInfo.keySet()) {
+			  System.out.println("key: " + i + " value: " + regionInfo.get(i));
+			  regions.put(i, new NuberRegion(this, i, regionInfo.get(i)));
+		}
+		
+		for (String i : regions.keySet()) {
+			  System.out.println("key: " + i + " value: " + regions.get(i));
+		}
 	}
 	
 	/**
@@ -37,8 +50,9 @@ public class NuberDispatch {
 	 * @param The driver to add to the queue.
 	 * @return Returns true if driver was added to the queue
 	 */
-	public boolean addDriver(Driver newDriver)
-	{
+	public boolean addDriver(Driver newDriver) {
+		
+		return drivers.offer(newDriver);
 	}
 	
 	/**
@@ -48,8 +62,9 @@ public class NuberDispatch {
 	 * 
 	 * @return A driver that has been removed from the queue
 	 */
-	public Driver getDriver()
-	{
+	public Driver getDriver() {
+		
+		return drivers.poll();
 	}
 
 	/**
@@ -80,6 +95,7 @@ public class NuberDispatch {
 	 * @return returns a Future<BookingResult> object
 	 */
 	public Future<BookingResult> bookPassenger(Passenger passenger, String region) {
+		return regions.get(region).bookPassenger(passenger);
 	}
 
 	/**
@@ -89,8 +105,8 @@ public class NuberDispatch {
 	 * 
 	 * @return Number of bookings awaiting driver, across ALL regions
 	 */
-	public int getBookingsAwaitingDriver()
-	{
+	public int getBookingsAwaitingDriver() {
+		return 0;
 	}
 	
 	/**
