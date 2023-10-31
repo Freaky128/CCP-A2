@@ -1,6 +1,9 @@
 package nuber.students;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * A single Nuber region that operates independently of other regions, other than getting 
@@ -20,7 +23,9 @@ public class NuberRegion {
 	
 	private NuberDispatch dispatch;
 	private String regionName;
-	private int maxJobs;
+	private ExecutorService service;
+	private boolean isActive;
+	private ThreadPoolExecutor pool;
 	
 	/**
 	 * Creates a new Nuber region
@@ -32,7 +37,9 @@ public class NuberRegion {
 	public NuberRegion(NuberDispatch dispatch, String regionName, int maxSimultaneousJobs) {
 		this.dispatch = dispatch;
 		this.regionName = regionName;
-		this.maxJobs = maxSimultaneousJobs;
+		this.service = Executors.newFixedThreadPool(maxSimultaneousJobs);
+		this.pool = (ThreadPoolExecutor) service;
+		this.isActive = true;
 	}
 	
 	/**
@@ -46,16 +53,38 @@ public class NuberRegion {
 	 * @param waitingPassenger
 	 * @return a Future that will provide the final BookingResult object from the completed booking
 	 */
-	public Future<BookingResult> bookPassenger(Passenger waitingPassenger)
-	{		
-		return null;
+	public Future<BookingResult> bookPassenger(Passenger waitingPassenger) {
+		System.out.println("\n\nbefore submit");
+		System.out.println("Maximum allowed threads: " + pool.getMaximumPoolSize());
+	    System.out.println("Current threads in pool: " + pool.getPoolSize());
+	    System.out.println("Currently executing threads: " + pool.getActiveCount());
+	    System.out.println("Total number of threads(ever scheduled): " + pool.getTaskCount());
+	    System.out.println("Waiting jobs: " + pool.getQueue().size());
+		
+		if(isActive) {
+			dispatch.incrementBookingsAwaitingDriver();
+			Future<BookingResult> future = service.submit(new Booking(this.dispatch, waitingPassenger));
+			
+			System.out.println("\n\nafter submit");
+			System.out.println("Maximum allowed threads: " + pool.getMaximumPoolSize());
+		    System.out.println("Current threads in pool: " + pool.getPoolSize());
+		    System.out.println("Currently executing threads: " + pool.getActiveCount());
+		    System.out.println("Total number of threads(ever scheduled): " + pool.getTaskCount());
+		    System.out.println("Waiting jobs: " + pool.getQueue().size());
+			
+			return future;
+		}
+		else {
+			System.out.println("Booking rejected as this region is shutdown");
+			return null;
+		}
 	}
 	
 	/**
 	 * Called by dispatch to tell the region to complete its existing bookings and stop accepting any new bookings
 	 */
-	public void shutdown()
-	{
+	public void shutdown() {
+		service.shutdown();
 	}
 		
 }

@@ -19,6 +19,8 @@ public class NuberDispatch {
 	
 	private boolean logEvents = false;
 	
+	private int BookingsAwaitingDriver = 0;
+	
 	private HashMap<String, NuberRegion> regions = new HashMap<String, NuberRegion>();
 	private ArrayBlockingQueue<Driver> drivers = new ArrayBlockingQueue<Driver>(MAX_DRIVERS);
 	
@@ -62,7 +64,10 @@ public class NuberDispatch {
 	 * 
 	 * @return A driver that has been removed from the queue
 	 */
-	public Driver getDriver() {
+	public synchronized Driver getDriver() {
+		if(drivers.peek() != null) {
+			this.BookingsAwaitingDriver -= 1;
+		}
 		
 		return drivers.poll();
 	}
@@ -105,14 +110,21 @@ public class NuberDispatch {
 	 * 
 	 * @return Number of bookings awaiting driver, across ALL regions
 	 */
-	public int getBookingsAwaitingDriver() {
-		return 0;
+	public synchronized int getBookingsAwaitingDriver() {
+		return this.BookingsAwaitingDriver;
+	}
+	
+	public synchronized void incrementBookingsAwaitingDriver() {
+		this.BookingsAwaitingDriver += 1;
 	}
 	
 	/**
 	 * Tells all regions to finish existing bookings already allocated, and stop accepting new bookings
 	 */
 	public void shutdown() {
+		for (String i : regions.keySet()) {
+			regions.get(i).shutdown();
+		}
 	}
 
 }

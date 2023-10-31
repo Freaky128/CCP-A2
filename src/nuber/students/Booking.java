@@ -1,5 +1,7 @@
 package nuber.students;
 
+import java.util.concurrent.Callable;
+
 /**
  * 
  * Booking represents the overall "job" for a passenger getting to their destination.
@@ -18,7 +20,7 @@ package nuber.students;
  * @author james
  *
  */
-public class Booking {
+public class Booking implements Callable<BookingResult> {
 
 		
 	/**
@@ -43,14 +45,20 @@ public class Booking {
 	 * 4.	It must then call the Driver.driveToDestination() function, with the thread pausing 
 	 * 			whilst as function is called.
 	 * 5.	Once at the destination, the time is recorded, so we know the total trip duration. 
-	 * 6.	The driver, now free, is added back into Dispatch’s list of available drivers. 
+	 * 6.	The driver, now free, is added back into Dispatchï¿½s list of available drivers. 
 	 * 7.	The call() function the returns a BookingResult object, passing in the appropriate 
 	 * 			information required in the BookingResult constructor.
 	 *
 	 * @return A BookingResult containing the final information about the booking 
 	 */
 	public BookingResult call() {
-
+		try {
+			wait(15000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	/***
@@ -64,8 +72,8 @@ public class Booking {
 	 * @return The compiled string
 	 */
 	@Override
-	public String toString()
-	{
+	public String toString() {
+		return "";
 	}
 
 }

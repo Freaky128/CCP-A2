@@ -12,10 +12,26 @@ public class AssignmentDriver {
 		boolean logEvents = true;
 		
 		HashMap<String, Integer> testRegions = new HashMap<String, Integer>();
-		testRegions.put("Test Region1", 50);
+		testRegions.put("Test Region1", 3);
 		testRegions.put("Test Region2", 100);
 		
-		NuberDispatch dispatch = new NuberDispatch(testRegions, logEvents);		
+		NuberDispatch dispatch = new NuberDispatch(testRegions, logEvents);
+		
+		Passenger testPassenger1 = new Passenger("Alex", 100);
+		Passenger testPassenger2 = new Passenger("Alex", 100);
+		Passenger testPassenger3 = new Passenger("Alex", 100);
+		Passenger testPassenger4 = new Passenger("Alex", 100);
+		Passenger testPassenger5 = new Passenger("Alex", 100);
+		
+		dispatch.bookPassenger(testPassenger1, "Test Region1");
+		dispatch.bookPassenger(testPassenger2, "Test Region1");
+		dispatch.bookPassenger(testPassenger3, "Test Region1");
+		dispatch.bookPassenger(testPassenger4, "Test Region1");
+		Thread.sleep(10000);
+		dispatch.bookPassenger(testPassenger5, "Test Region1");
+		
+		Thread.sleep(30000);
+		dispatch.shutdown();
 
 		
 //		/**
