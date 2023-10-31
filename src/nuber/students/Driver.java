@@ -1,7 +1,7 @@
 package nuber.students;
 
 public class Driver extends Person {
-
+	private Passenger passenger;
 	
 	public Driver(String driverName, int maxSleep) {
 		super(driverName, maxSleep);
@@ -14,8 +14,9 @@ public class Driver extends Person {
 	 * @param newPassenger Passenger to collect
 	 * @throws InterruptedException
 	 */
-	public void pickUpPassenger(Passenger newPassenger)
-	{
+	public void pickUpPassenger(Passenger newPassenger) {
+		this.passenger = newPassenger;
+		delay((int)(Math.random() * maxSleep));
 	}
 
 	/**
@@ -25,6 +26,14 @@ public class Driver extends Person {
 	 * @throws InterruptedException
 	 */
 	public void driveToDestination() {
+		delay(passenger.getTravelTime());
 	}
 	
+	private void delay(int time) {
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }

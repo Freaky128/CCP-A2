@@ -33,7 +33,7 @@ public class Booking implements Callable<BookingResult> {
 	private Driver driver = null;
 	private int ID;
 	private long startTime;
-	private Date time = new Date();
+	private long endTime;
 
 	static synchronized int setID() {
 		IDcount += 1;
@@ -49,14 +49,11 @@ public class Booking implements Callable<BookingResult> {
 	 * @param passenger
 	 */
 	public Booking(NuberDispatch dispatch, Passenger passenger) {
-		this.startTime = time.getTime();
+		this.startTime = new Date().getTime();
 		this.dispatch = dispatch;
 		this.passenger = passenger;
 		this.ID = Booking.setID();
-		this.dispatch.logEvent(this, "Created Booking");
-		System.out.println("Bookings awaiting drivers: " + this.dispatch.getBookingsAwaitingDriver());
-		
-		
+		this.dispatch.logEvent(this, "Created Booking");		
 	}
 	
 	/**
@@ -80,11 +77,18 @@ public class Booking implements Callable<BookingResult> {
 		
 		driver = dispatch.getDriver();
 		dispatch.logEvent(this, "Obtained driver");
-		System.out.println("Bookings awaiting drivers: " + this.dispatch.getBookingsAwaitingDriver());
+		
+		driver.pickUpPassenger(this.passenger);
+		dispatch.logEvent(this, "Arrived at passenger");
+		
+		driver.driveToDestination();
+		endTime = new Date().getTime();
+		dispatch.logEvent(this, "Trip completed");
 		
 		dispatch.addDriver(driver);
+		dispatch.logEvent(this, "Driver freed, Booking complete");
 				
-		return null;
+		return new BookingResult(ID, passenger, driver, endTime - startTime);
 	}
 	
 	/***

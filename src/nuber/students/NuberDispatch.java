@@ -33,14 +33,15 @@ public class NuberDispatch {
 	public NuberDispatch(HashMap<String, Integer> regionInfo, boolean logEvents) {
 		this.logEvents = logEvents;
 		
+		System.out.println("Creating Nuber Dispatch");
+		System.out.println("Creating " + regionInfo.size() + " regions");
+		
 		for (String i : regionInfo.keySet()) {
-			  System.out.println("key: " + i + " value: " + regionInfo.get(i));
-			  regions.put(i, new NuberRegion(this, i, regionInfo.get(i)));
+			System.out.println("Creating Nuber region for " + i);
+			regions.put(i, new NuberRegion(this, i, regionInfo.get(i)));
 		}
 		
-		for (String i : regions.keySet()) {
-			  System.out.println("key: " + i + " value: " + regions.get(i));
-		}
+		System.out.println("Done creating " + regions.size() + " regions");
 	}
 	
 	/**
@@ -94,12 +95,12 @@ public class NuberDispatch {
 	 * @param booking The booking that's responsible for the event occurring
 	 * @param message The message to show
 	 */
-	public void logEvent(Booking booking, String message) {
+	public synchronized void logEvent(Booking booking, String message) { // temp synchronised. Remember to remove
 		
 		if (!logEvents) return;
 		
 		System.out.println("\n" + booking + ": " + message);
-		
+		System.out.println("Bookings awaiting drivers: " + this.getBookingsAwaitingDriver());
 	}
 
 	/**

@@ -31,7 +31,6 @@ public class AssignmentDriver {
 		dispatch.bookPassenger(testPassenger4, "Test Region1");
 		dispatch.bookPassenger(testPassenger5, "Test Region1");
 		
-		Thread.sleep(30000);
 		dispatch.shutdown();
 
 		
