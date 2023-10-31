@@ -1,5 +1,9 @@
 package nuber.students;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 /**
@@ -22,11 +26,20 @@ import java.util.concurrent.Callable;
  */
 public class Booking implements Callable<BookingResult> {
 	
+	private static int IDcount = 0;
+	
 	private NuberDispatch dispatch;
 	private Passenger passenger;
 	private Driver driver = null;
+	private int ID;
+	private long startTime;
+	private Date time = new Date();
 
-		
+	static synchronized int setID() {
+		IDcount += 1;
+		return IDcount;
+	}
+	
 	/**
 	 * Creates a new booking for a given Nuber dispatch and passenger, noting that no
 	 * driver is provided as it will depend on whether one is available when the region 
@@ -36,8 +49,14 @@ public class Booking implements Callable<BookingResult> {
 	 * @param passenger
 	 */
 	public Booking(NuberDispatch dispatch, Passenger passenger) {
+		this.startTime = time.getTime();
 		this.dispatch = dispatch;
 		this.passenger = passenger;
+		this.ID = Booking.setID();
+		this.dispatch.logEvent(this, "Created Booking");
+		System.out.println("Bookings awaiting drivers: " + this.dispatch.getBookingsAwaitingDriver());
+		
+		
 	}
 	
 	/**
@@ -57,7 +76,13 @@ public class Booking implements Callable<BookingResult> {
 	 * @return A BookingResult containing the final information about the booking 
 	 */
 	public BookingResult call() {
-		dispatch.getDriver();
+		dispatch.logEvent(this, "Booking started");
+		
+		driver = dispatch.getDriver();
+		dispatch.logEvent(this, "Obtained driver");
+		System.out.println("Bookings awaiting drivers: " + this.dispatch.getBookingsAwaitingDriver());
+		
+		dispatch.addDriver(driver);
 				
 		return null;
 	}
@@ -74,7 +99,21 @@ public class Booking implements Callable<BookingResult> {
 	 */
 	@Override
 	public String toString() {
-		return "";
+		LocalDateTime now = LocalDateTime.now();
+		String formattedTime = now.format(DateTimeFormatter.ofPattern("HH:mm:ss.SSS", Locale.ENGLISH));
+		
+		String driverName = "null";
+		String passengerName = "null";
+		
+		if (driver != null) {
+			driverName = driver.name;
+		}
+		
+		if (passenger != null) {
+			passengerName = passenger.name;
+		}
+		
+		return "[" + formattedTime + " : " + Thread.currentThread().getName() + "], " + ID + " : " + driverName + " : " + passengerName;
 	}
 
 }

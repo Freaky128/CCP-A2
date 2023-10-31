@@ -11,7 +11,6 @@ import java.util.concurrent.Future;
  *
  */
 public class NuberDispatch {
-
 	/**
 	 * The maximum number of idle drivers that can be awaiting a booking 
 	 */
@@ -99,7 +98,7 @@ public class NuberDispatch {
 		
 		if (!logEvents) return;
 		
-		System.out.println(booking + ": " + message);
+		System.out.println("\n" + booking + ": " + message);
 		
 	}
 

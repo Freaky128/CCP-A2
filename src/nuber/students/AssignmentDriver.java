@@ -23,11 +23,12 @@ public class AssignmentDriver {
 		Passenger testPassenger4 = new Passenger("Alex", 100);
 		Passenger testPassenger5 = new Passenger("Alex", 100);
 		
+		dispatch.addDriver(new Driver("Ben", 10000));
+		
 		dispatch.bookPassenger(testPassenger1, "Test Region1");
 		dispatch.bookPassenger(testPassenger2, "Test Region1");
 		dispatch.bookPassenger(testPassenger3, "Test Region1");
 		dispatch.bookPassenger(testPassenger4, "Test Region1");
-		Thread.sleep(10000);
 		dispatch.bookPassenger(testPassenger5, "Test Region1");
 		
 		Thread.sleep(30000);
