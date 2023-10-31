@@ -52,9 +52,17 @@ public class NuberDispatch {
 	 * @param The driver to add to the queue.
 	 * @return Returns true if driver was added to the queue
 	 */
-	public boolean addDriver(Driver newDriver) {
+	public synchronized boolean addDriver(Driver newDriver) {
 		
-		return drivers.offer(newDriver);
+		boolean success = drivers.offer(newDriver);
+		if (success) {
+			notifyAll();
+		}
+		else {
+			System.out.println("Driver cannot be added. Driver queue is full!");
+		}
+				
+		return success;
 	}
 	
 	/**
@@ -65,9 +73,16 @@ public class NuberDispatch {
 	 * @return A driver that has been removed from the queue
 	 */
 	public synchronized Driver getDriver() {
-		if(drivers.peek() != null) {
-			this.BookingsAwaitingDriver -= 1;
+		while(drivers.size() == 0) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			
 		}
+		
+		this.BookingsAwaitingDriver -= 1;		
 		
 		return drivers.poll();
 	}

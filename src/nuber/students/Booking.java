@@ -21,6 +21,10 @@ import java.util.concurrent.Callable;
  *
  */
 public class Booking implements Callable<BookingResult> {
+	
+	private NuberDispatch dispatch;
+	private Passenger passenger;
+	private Driver driver = null;
 
 		
 	/**
@@ -31,8 +35,9 @@ public class Booking implements Callable<BookingResult> {
 	 * @param dispatch
 	 * @param passenger
 	 */
-	public Booking(NuberDispatch dispatch, Passenger passenger)
-	{
+	public Booking(NuberDispatch dispatch, Passenger passenger) {
+		this.dispatch = dispatch;
+		this.passenger = passenger;
 	}
 	
 	/**
@@ -52,12 +57,8 @@ public class Booking implements Callable<BookingResult> {
 	 * @return A BookingResult containing the final information about the booking 
 	 */
 	public BookingResult call() {
-		try {
-			wait(15000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		
+		dispatch.getDriver();
+				
 		return null;
 	}
 	
