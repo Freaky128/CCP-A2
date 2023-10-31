@@ -95,7 +95,7 @@ public class NuberDispatch {
 	 * @param booking The booking that's responsible for the event occurring
 	 * @param message The message to show
 	 */
-	public synchronized void logEvent(Booking booking, String message) { // temp synchronised. Remember to remove
+	public void logEvent(Booking booking, String message) { // may cause race conditions. may need to change the position of BookingsAwaitingDriver mods or sync this method. 
 		
 		if (!logEvents) return;
 		

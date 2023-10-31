@@ -39,7 +39,6 @@ public class NuberRegion {
 		this.regionName = regionName;
 		this.service = Executors.newFixedThreadPool(maxSimultaneousJobs);
 		this.pool = (ThreadPoolExecutor) service;
-		this.isActive = true;
 	}
 	
 	/**
@@ -53,24 +52,9 @@ public class NuberRegion {
 	 * @param waitingPassenger
 	 * @return a Future that will provide the final BookingResult object from the completed booking
 	 */
-	public Future<BookingResult> bookPassenger(Passenger waitingPassenger) {
-		System.out.println("\n\nbefore submit");
-		System.out.println("Maximum allowed threads: " + pool.getMaximumPoolSize());
-	    System.out.println("Current threads in pool: " + pool.getPoolSize());
-	    System.out.println("Currently executing threads: " + pool.getActiveCount());
-	    System.out.println("Total number of threads(ever scheduled): " + pool.getTaskCount());
-	    System.out.println("Waiting jobs: " + pool.getQueue().size());
-		
-		if(isActive) {
-			dispatch.incrementBookingsAwaitingDriver();
+	public Future<BookingResult> bookPassenger(Passenger waitingPassenger) {		
+		if(!service.isShutdown()) {
 			Future<BookingResult> future = service.submit(new Booking(this.dispatch, waitingPassenger));
-			
-			System.out.println("\n\nafter submit");
-			System.out.println("Maximum allowed threads: " + pool.getMaximumPoolSize());
-		    System.out.println("Current threads in pool: " + pool.getPoolSize());
-		    System.out.println("Currently executing threads: " + pool.getActiveCount());
-		    System.out.println("Total number of threads(ever scheduled): " + pool.getTaskCount());
-		    System.out.println("Waiting jobs: " + pool.getQueue().size());
 			
 			return future;
 		}

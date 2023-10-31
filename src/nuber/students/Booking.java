@@ -53,6 +53,7 @@ public class Booking implements Callable<BookingResult> {
 		this.dispatch = dispatch;
 		this.passenger = passenger;
 		this.ID = Booking.setID();
+		this.dispatch.incrementBookingsAwaitingDriver();
 		this.dispatch.logEvent(this, "Created Booking");		
 	}
 	
