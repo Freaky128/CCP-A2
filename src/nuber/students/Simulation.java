@@ -78,8 +78,6 @@ public class Simulation {
 				Future<BookingResult> f = i.next();
 
 				if (f.isDone()) {
-					BookingResult b = f.get();
-					System.out.println("Booking result: " + b.jobID + " : " + b.driver.name + " : " + b.passenger.name + " : " + b.tripDuration);
 					i.remove();
 				}
 			}

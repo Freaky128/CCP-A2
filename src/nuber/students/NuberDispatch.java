@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 /**
  * The core Dispatch class that instantiates and manages everything for Nuber
  * 
- * @author James(class design), Matthew(class functionality)
+ * @author James(class design), Matthew Freak(class functionality)
  *
  */
 public class NuberDispatch {
@@ -95,12 +95,11 @@ public class NuberDispatch {
 	 * @param booking The booking that's responsible for the event occurring
 	 * @param message The message to show
 	 */
-	public void logEvent(Booking booking, String message) { // may cause race conditions. may need to change the position of BookingsAwaitingDriver mods or sync this method. 
+	public void logEvent(Booking booking, String message) { 
 		
 		if (!logEvents) return;
 		
 		System.out.println("\n" + booking + ": " + message);
-		System.out.println("Bookings awaiting drivers: " + this.getBookingsAwaitingDriver());
 	}
 
 	/**
@@ -129,6 +128,10 @@ public class NuberDispatch {
 		return this.BookingsAwaitingDriver;
 	}
 	
+	/**
+	 * Increments the number of bookings waiting for a driver.
+	 * Used when a booking is successfully created.
+	 */
 	public synchronized void incrementBookingsAwaitingDriver() {
 		this.BookingsAwaitingDriver += 1;
 	}

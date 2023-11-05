@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
  * Booking's should have a globally unique, sequential ID, allocated on their creation. 
  * This should be multi-thread friendly, allowing bookings to be created from different threads.
  * 
- * @author james
+ * @author James(class design), Matthew Freak(class functionality)
  *
  */
 public class Booking implements Callable<BookingResult> {
@@ -34,7 +34,11 @@ public class Booking implements Callable<BookingResult> {
 	private int ID;
 	private long startTime;
 	private long endTime;
-
+	
+	/**
+	 * Increments the shared ID counter and returns the booking's ID
+	 * @return an int representing the booking's ID
+	 */
 	static synchronized int setID() {
 		IDcount += 1;
 		return IDcount;

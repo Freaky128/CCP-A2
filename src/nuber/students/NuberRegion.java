@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 
  * Bookings do NOT have to be completed in FIFO order.
  * 
- * @author james
+ * @author James(class design), Matthew Freak(class functionality)
  *
  */
 public class NuberRegion {
@@ -24,8 +24,6 @@ public class NuberRegion {
 	private NuberDispatch dispatch;
 	private String regionName;
 	private ExecutorService service;
-	private boolean isActive;
-	private ThreadPoolExecutor pool;
 	
 	/**
 	 * Creates a new Nuber region
@@ -38,7 +36,6 @@ public class NuberRegion {
 		this.dispatch = dispatch;
 		this.regionName = regionName;
 		this.service = Executors.newFixedThreadPool(maxSimultaneousJobs);
-		this.pool = (ThreadPoolExecutor) service;
 	}
 	
 	/**
